@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# CS1591: Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = suggestion
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = silent
+
+# CA2234: Pass system uri objects instead of strings
+dotnet_diagnostic.CA2234.severity = suggestion
+
+# CA1056: URI-like properties should not be strings
+dotnet_diagnostic.CA1056.severity = suggestion

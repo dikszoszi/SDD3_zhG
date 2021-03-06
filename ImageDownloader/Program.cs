@@ -1,4 +1,5 @@
-﻿namespace ImageDownloader
+﻿[assembly: System.CLSCompliant(false)]
+namespace ImageDownloader
 {
     using System;
     using System.Diagnostics;
@@ -6,22 +7,22 @@
     using System.Net;
     using System.Threading.Tasks;
 
-    class Program
+    internal class Program
     {
-        private static readonly object consoleLock = new object();
+        private static readonly object consoleLock = new ();
 
-        static void Main(string[] args)
+        private static void Main()
         {
-            WebpageProvider downloader = new WebpageProvider();
-            ImageCollector collector = new ImageCollector(downloader);
+            WebpageProvider downloader = new ();
+            ImageCollector collector = new (downloader);
 
-            System.Collections.Generic.IList<ImageData> images = collector.GetImages(@"http://users.nik.uni-obuda.hu/cseri/zh2_gyakorlo/simplepage.html");
+            System.Collections.Generic.IList<ImageData> images = collector.GetImages(new Uri(@"http://users.nik.uni-obuda.hu/cseri/zh2_gyakorlo/simplepage.html"));
 
-            int imageCount = images.Count();
+            int imageCount = images.Count;
             Task[] tasks = new Task[imageCount];
             for (int i = 0; i < imageCount; i++)
             {
-                DownloadData data = new DownloadData()
+                DownloadData data = new ()
                 {
                     RowIndex = i,
                     ImageData = images[i],
@@ -35,10 +36,7 @@
             Task.WaitAll(tasks.ToArray());
             foreach (var image in images)
             {
-                Process p = new Process();
-                p.StartInfo.FileName = image.FileName;
-                p.StartInfo.UseShellExecute = true;
-                p.Start();
+                Process.Start(new ProcessStartInfo(fileName: image.FileName) { UseShellExecute = true });
             }
 
             Console.ReadLine();
@@ -59,12 +57,12 @@
             }
 
             string secondMessage = "Success";
-            WebClient webClient = new WebClient();
+            WebClient webClient = new ();
             try
             {
                 webClient.DownloadFile(downloadData.ImageData.URL, downloadData.ImageData.FileName);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
                 secondMessage = ex.Message;
             }
@@ -76,6 +74,8 @@
                 Console.CursorLeft = firstMessage.Length;
                 Console.WriteLine(secondMessage);
             }
+
+            webClient.Dispose();
         }
     }
 }
